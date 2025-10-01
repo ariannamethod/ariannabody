@@ -4,73 +4,38 @@ __pycache__/
 *$py.class
 *.so
 .Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
 *.egg-info/
-.installed.cfg
-*.egg
+dist/
+build/
 
 # Virtual environments
-.env
-.venv
-env/
 venv/
+env/
 ENV/
-env.bak/
-venv.bak/
 
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
-*~
 
-# OS
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
+# Arianna Memory - NEVER commit!
+*.sqlite3
+*.db
+
+# Arianna sensory data
+.arianna/
+sensors/photos/
+sensors/audio/
+sensors/logs/
+
+# API Keys
+.env
+*.key
 
 # Logs
 *.log
-logs/
-
-# Database
-*.db
-*.sqlite
-*.sqlite3
-
-# API Keys (never commit!)
-.env
-*.key
-*_key.txt
-api_keys.txt
-
-# Arianna specific
-resonance.sqlite3
-arianna_logs/
-*.resonance
-
-# Termux specific
-termux-backup/
-termux-home/
 
 # Temporary files
 *.tmp
 *.temp
-*.bak
-*.backup
