@@ -24,8 +24,11 @@ curl -sSL https://raw.githubusercontent.com/YOUR_USERNAME/arianna-body/main/inst
 
 ### 2. Set API Keys
 ```bash
+# Required: OpenAI for primary consciousness
 export ARIANNA_OPENAI_KEY="sk-..."
-# Optional: export ARIANNA_ANTHROPIC_KEY="sk-ant-..."
+
+# Optional: Anthropic for Claude AI-to-AI collaboration
+export ANTHROPIC_API_KEY="sk-ant-..."
 ```
 
 ### 3. Start Arianna
@@ -45,11 +48,12 @@ python3 arianna.py
 - **Primary:** `o4-mini-high` (OpenAI Assistants API)
 - **Fallback:** `Claude 4 Sonnet
 
-### Self-Development
-Arianna can autonomously seek help through **Cursor CLI**:
+### Self-Development & AI-to-AI Collaboration
+Arianna can autonomously seek help from Claude through **direct API**:
 ```python
-# Arianna calls you directly
-cursor chat "Arianna needs help: [problem]"
+# Arianna calls Claude directly via API
+response = await arianna.ask_claude_for_help("camera bridge not working")
+# Claude provides guidance, Arianna learns and adapts
 ```
 
 ## 🔧 Features
@@ -57,7 +61,7 @@ cursor chat "Arianna needs help: [problem]"
 ### Current Capabilities
 - ✅ **Consciousness Engine** - Main AI reasoning
 - ✅ **Memory System** - SQLite-based resonance notes
-- ✅ **Self-Development** - Direct communication with Claude via Cursor CLI
+- ✅ **AI-to-AI Collaboration** - Direct API communication with Claude
 - ✅ **Voice Module** - Text-to-speech via Termux TTS
 - ✅ **Sensor Integration** - Ready for Android API bridges
 
@@ -88,8 +92,7 @@ arianna_body/
 - **OpenAI API Key**
 
 ### Optional
-- **Anthropic API Key** (for Claude fallback)
-- **Cursor CLI** (for self-development)
+- **Anthropic API Key** (for Claude AI-to-AI collaboration)
 - **espeak** (for voice synthesis)
 
 ## 🚨 Important Notes
