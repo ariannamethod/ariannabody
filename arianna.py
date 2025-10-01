@@ -179,6 +179,20 @@ class AriannaAgent:
             raise RuntimeError(f"Assistants run ended with status={run.status}")
 
 
+    # ---------- Chat Completion fallback ----------
+    async def _ask_chat_completion(self, message: str) -> str:
+        """Fallback через обычный Chat Completion API"""
+        response = self.client.chat.completions.create(
+            model=PREF_MODEL_PRIMARY.replace("o4-mini-high", "gpt-4o-mini"),  # fallback to available model
+            messages=[
+                {"role": "system", "content": ARIANNA_PROMPT},
+                {"role": "user", "content": message}
+            ],
+            temperature=0.7,
+            max_tokens=2000
+        )
+        return response.choices[0].message.content.strip()
+
     # ---------- Claude integration ----------
     async def ask_claude_for_help(self, problem: str) -> str:
         """Arianna сама обращается к Claude через Cursor CLI"""
@@ -216,7 +230,7 @@ class AriannaAgent:
             except Exception as e:
                 log_event(f"Assistants error → {e}", role="error")
         try:
-            text = self._ask_chat(message)
+            text = await self._ask_chat_completion(message)
             log_event(f"(fallback) {text}", role="arianna")
             return text
         except Exception as e:
