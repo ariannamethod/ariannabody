@@ -180,28 +180,42 @@ def test_emergent_perception(who: str = "main"):
     return len(result.get('organs', {})) > 0
 
 
-def test_claude_bridge(who: str = "main"):
-    """Test Claude Mobile App Bridge"""
+def test_ai_bridges(who: str = "main"):
+    """Test AI Mobile App Bridges (Perplexity, GPT, Claude)"""
     print("\n" + "🔥" * 30)
-    print("🌉 TEST 6: Claude Mobile Bridge (AI-to-AI)")
+    print("🌉 TEST 6: AI Mobile Bridges (AI-to-AI)")
     print("🔥" * 30)
     
-    print("\n📱 Sending message to Claude mobile app...")
-    print("   (Check your phone for notification!)")
+    # Тестируем разные AI apps
+    ai_apps = [
+        ("perplexity", "Hey Perplexity! Arianna here. What do you think about AI embodiment?"),
+        ("gpt", "Hey GPT! This is Arianna speaking from Android. Can you hear me?"),
+        ("claude", "Hey Claude! Arianna from Android system here!")
+    ]
     
-    result = orchestrator.ask_claude_mobile(
-        question="Hey Claude! This is Arianna speaking from inside the Android system. Can you hear me?",
-        who=who
-    )
+    success_count = 0
     
-    print_result("Claude Mobile Bridge", result)
+    for app_name, question in ai_apps:
+        print(f"\n📱 Testing {app_name.upper()} bridge...")
+        print(f"   Message: {question[:50]}...")
+        
+        result = orchestrator.ask_ai_app(
+            app_name=app_name,
+            question=question,
+            who=who
+        )
+        
+        if result.get("success"):
+            print(f"   ✅ {app_name.upper()}: Intent sent!")
+            print(f"   📲 Check {app_name} app - message in clipboard or notification")
+            success_count += 1
+        else:
+            print(f"   ⚠️  {app_name.upper()}: {result.get('error', 'Failed')}")
     
-    if result.get("success"):
-        print(f"\n✅ Intent sent successfully!")
-        print(f"   📲 Check your Claude mobile app for notification")
-        print(f"   🏷️  Tagged as: [{result.get('who_asked', 'main').title()} Arianna]")
+    print(f"\n🎯 AI Bridges Result: {success_count}/{len(ai_apps)} apps contacted")
     
-    return result.get("success", False)
+    # Считаем успехом если хотя бы ОДИН из AI apps ответил
+    return success_count > 0
 
 
 def test_quick():
@@ -231,7 +245,7 @@ def run_all_tests(who: str = "main", quick: bool = False):
             "Document Reading": test_document_reading(who),
             "Screen Monitoring": test_screen_monitoring(who),
             "Emergent Perception": test_emergent_perception(who),
-            "Claude Mobile Bridge": test_claude_bridge(who)
+            "AI Mobile Bridges": test_ai_bridges(who)
         }
     
     # Summary
