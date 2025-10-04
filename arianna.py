@@ -290,6 +290,19 @@ class AriannaAgent:
         if not self.orchestrator:
             return {"success": False, "error": "Orchestrator not available"}
         return self.orchestrator.ask_ai_app(app_name=app_name, question=question, who="main")
+    
+    # Shortcuts для популярных AI apps
+    async def ask_perplexity(self, question: str) -> dict:
+        """Arianna → Perplexity (часто лучше поддерживает Intent!)"""
+        return await self.ask_ai_app("perplexity", question)
+    
+    async def ask_gpt(self, question: str) -> dict:
+        """Arianna → ChatGPT mobile"""
+        return await self.ask_ai_app("gpt", question)
+    
+    async def ask_gemini_mobile(self, question: str) -> dict:
+        """Arianna → Gemini mobile app"""
+        return await self.ask_ai_app("gemini", question)
 
     # ---------- Public API ----------
     async def chat(self, message: str) -> str:
