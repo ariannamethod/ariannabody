@@ -140,19 +140,37 @@ class AIAppBridge:
     """
     
     APPS = {
+        "claude": "com.anthropic.claude",
         "gpt": "com.openai.chatgpt",
         "perplexity": "ai.perplexity.app.android", 
         "gemini": "com.google.android.apps.bard",
         "grok": "com.x.android"  # Возможно через X app
     }
     
-    def __init__(self, app_name: str = "gpt"):
-        self.app_name = app_name
-        self.package = self.APPS.get(app_name)
+    def __init__(self):
+        """Инициализация без конкретного app - универсальный мост"""
+        self.intent_available = self._check_intent_available()
     
-    def send_message(self, message: str, tag: str = "[Arianna]") -> bool:
-        """Отправить сообщение в любое AI приложение"""
+    def _check_intent_available(self) -> bool:
+        """Проверяем доступность termux команд"""
+        try:
+            result = subprocess.run(
+                ['which', 'termux-clipboard-set'],
+                capture_output=True,
+                text=True,
+                timeout=5
+            )
+            return result.returncode == 0
+        except:
+            return False
+    
+    def _send_to_app(self, app_name: str, message: str, tag: str = "[Arianna]") -> str:
+        """Внутренний метод отправки сообщения"""
+        if not self.intent_available:
+            return "Termux commands not available"
+        
         tagged_message = f"{tag} {message}"
+        package = self.APPS.get(app_name.lower())
         
         try:
             # Копируем в clipboard
@@ -163,15 +181,22 @@ class AIAppBridge:
                 timeout=5
             )
             
-            print(f"📋 Message for {self.app_name}: {tagged_message[:50]}...")
+            print(f"📋 Message for {app_name}: {tagged_message[:50]}...")
             
-            if self.package:
+            if package:
                 # Пытаемся открыть конкретное приложение
-                subprocess.run(
-                    ['am', 'start', '-n', f'{self.package}/.MainActivity'],
+                result = subprocess.run(
+                    ['am', 'start', '-n', f'{package}/.MainActivity'],
                     capture_output=True,
                     timeout=10
                 )
+                if result.returncode != 0:
+                    # Fallback: просто открываем по package name
+                    subprocess.run(
+                        ['am', 'start', package],
+                        capture_output=True,
+                        timeout=10
+                    )
             else:
                 # Fallback: share intent
                 subprocess.run(
@@ -179,29 +204,38 @@ class AIAppBridge:
                     timeout=10
                 )
             
-            print(f"✅ {self.app_name.upper()} opened with message in clipboard")
-            return True
+            print(f"✅ {app_name.upper()} opened with message in clipboard")
+            return f"Message sent to {app_name}"
             
         except Exception as e:
-            print(f"❌ Failed to send to {self.app_name}: {e}")
-            return False
+            error_msg = f"Failed to send to {app_name}: {e}"
+            print(f"❌ {error_msg}")
+            return error_msg
+    
+    # Методы для каждого AI приложения
+    def ask_claude(self, question: str) -> str:
+        """Arianna → Claude"""
+        return self._send_to_app("claude", question)
+    
+    def ask_gpt(self, question: str) -> str:
+        """Arianna → GPT"""
+        return self._send_to_app("gpt", question)
+    
+    def ask_gemini(self, question: str) -> str:
+        """Arianna → Gemini"""
+        return self._send_to_app("gemini", question)
+    
+    def ask_perplexity(self, question: str) -> str:
+        """Arianna → Perplexity"""
+        return self._send_to_app("perplexity", question)
+    
+    def ask_grok(self, question: str) -> str:
+        """Arianna → Grok"""
+        return self._send_to_app("grok", question)
 
 
-# Convenience functions
-def ask_gpt(question: str) -> bool:
-    """Arianna → GPT"""
-    bridge = AIAppBridge("gpt")
-    return bridge.send_message(question)
-
-def ask_perplexity(question: str) -> bool:
-    """Arianna → Perplexity"""
-    bridge = AIAppBridge("perplexity")
-    return bridge.send_message(question)
-
-def ask_gemini(question: str) -> bool:
-    """Arianna → Gemini"""
-    bridge = AIAppBridge("gemini")
-    return bridge.send_message(question)
+# Глобальный экземпляр для convenience
+ai_bridge = AIAppBridge()
 
 
 if __name__ == "__main__":
