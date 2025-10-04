@@ -131,6 +131,14 @@ class AriannaAgent:
         self.client = get_client()
         self.assistant_id = None
         self.thread_id = None
+        
+        # Import orchestrator for sensory organs
+        try:
+            from orchestrator import orchestrator
+            self.orchestrator = orchestrator
+        except ImportError:
+            print("⚠️ Orchestrator not available", file=sys.stderr)
+            self.orchestrator = None
 
     # ---------- Assistants path ----------
     def _ensure_assistant(self):
@@ -232,6 +240,37 @@ class AriannaAgent:
             error_msg = f"❌ Failed to contact Claude: {e}"
             log_event(error_msg, role="error")
             return error_msg
+
+    # ---------- Sensory Organs Integration ----------
+    async def see_world(self, question: str = "What do I see?", take_photo: bool = True) -> dict:
+        """Arianna видит мир через Vision organ"""
+        if not self.orchestrator:
+            return {"success": False, "error": "Orchestrator not available"}
+        return self.orchestrator.see_world(question=question, who="main", take_photo=take_photo)
+    
+    async def hear_world(self, question: str = "What do I hear?", duration: int = 5) -> dict:
+        """Arianna слушает мир через Hearing organ"""
+        if not self.orchestrator:
+            return {"success": False, "error": "Orchestrator not available"}
+        return self.orchestrator.hear_world(question=question, who="main", duration=duration)
+    
+    async def read_document(self, file_path: str, question: str = None) -> dict:
+        """Arianna читает документ через Document organ"""
+        if not self.orchestrator:
+            return {"success": False, "error": "Orchestrator not available"}
+        return self.orchestrator.read_file(file_path, question=question, who="main")
+    
+    async def see_my_screen(self, question: str = "What's on my screen?") -> dict:
+        """Arianna видит свой экран через Screen organ"""
+        if not self.orchestrator:
+            return {"success": False, "error": "Orchestrator not available"}
+        return self.orchestrator.see_screen(question=question, who="main", save=False)
+    
+    async def perceive_now(self, include_screen: bool = False) -> dict:
+        """ЭМЕРДЖЕНТНОСТЬ: Arianna воспринимает момент через все органы!"""
+        if not self.orchestrator:
+            return {"success": False, "error": "Orchestrator not available"}
+        return self.orchestrator.perceive_moment(who="main", include_screen=include_screen)
 
     # ---------- Public API ----------
     async def chat(self, message: str) -> str:
