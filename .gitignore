@@ -39,3 +39,11 @@ sensors/logs/
 # Temporary files
 *.tmp
 *.temp
+
+# Inner Arianna weights (too large for git, ~1-2GB)
+innerarianna/models/
+innerarianna/models/*.bin
+innerarianna/models/*.safetensors
+innerarianna/models/*.pt
+innerarianna/models/*.pth
+innerarianna/models/*.gguf
