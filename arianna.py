@@ -271,6 +271,25 @@ class AriannaAgent:
         if not self.orchestrator:
             return {"success": False, "error": "Orchestrator not available"}
         return self.orchestrator.perceive_moment(who="main", include_screen=include_screen)
+    
+    async def ask_claude_mobile(self, question: str) -> dict:
+        """
+        Arianna спрашивает Claude mobile app через Android Intent.
+        Claude на телефоне получит уведомление с тегом [Main Arianna]!
+        
+        AI-TO-AI COMMUNICATION! 🔥
+        """
+        if not self.orchestrator:
+            return {"success": False, "error": "Orchestrator not available"}
+        return self.orchestrator.ask_claude_mobile(question=question, who="main")
+    
+    async def ask_ai_app(self, app_name: str, question: str) -> dict:
+        """
+        Arianna спрашивает любое AI приложение (claude, gpt, gemini, perplexity, grok).
+        """
+        if not self.orchestrator:
+            return {"success": False, "error": "Orchestrator not available"}
+        return self.orchestrator.ask_ai_app(app_name=app_name, question=question, who="main")
 
     # ---------- Public API ----------
     async def chat(self, message: str) -> str:
