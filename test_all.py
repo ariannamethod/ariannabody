@@ -9,7 +9,7 @@
 - Hearing (слух)
 - Document (документы)
 - Screen (экран)
-- Claude Bridge (AI-to-AI коммуникация)
+- AI Bridges (AI-to-AI коммуникация: Perplexity, GPT, Claude)
 - Orchestrator (координатор)
 
 Usage:
